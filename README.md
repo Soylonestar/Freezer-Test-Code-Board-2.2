@@ -20,7 +20,7 @@ void ADC_init (void);
 
 void USART0_TX_init (void);
 void USART0_print(void);
-void USART0_sendData(adc_data);
+void USART0_sendData(adc_data); // what data type do i send?
 //void USART0_print(const char *str);
 
 void LED_init (void);
@@ -177,6 +177,10 @@ void LED_init(void)
 	DDRH |= (1 << PH6); //enabling RED LED as output
 }
 
+void LED_Toggle (void)
+{
+	PORTH ^= (1 << PH5); //toggles the LED
+}
 void LED_Toggle (void)
 {
 	PORTH ^= (1 << PH5); //toggles the LED
