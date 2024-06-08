@@ -181,7 +181,3 @@ void LED_Toggle (void)
 {
 	PORTH ^= (1 << PH5); //toggles the LED
 }
-void LED_Toggle (void)
-{
-	PORTH ^= (1 << PH5); //toggles the LED
-}
