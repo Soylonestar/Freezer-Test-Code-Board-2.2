@@ -1,5 +1,4 @@
 # Freezer-Test-Code-Board-2.2
-
 /*
  * main.c
  *
@@ -26,9 +25,9 @@ void USART0_sendData(adc_data); // what data type do i send?
 void LED_init (void);
 void LED_Toggle(void);
 
-void INT_init(void); //testing timer with RED_LED by using Interrupts
+void INT5_init(void); //testing timer with RED_LED by using Interrupts
 
-//determine what volatile is exactly; gives the variable the opportunity to change in the ISR without being optimized in main
+//determine what volatile is exactly; gives the variable the opportunity to change in the ISR without being optimized in main;
 volatile float adc_data; //this is for the 16-bit data of ADC data register
 //volatile uint16_t adc_val; //unsigned 16-bit integer called adc_val, volatile because data may change
 int adc_conv_complete = 0;
@@ -38,9 +37,7 @@ int main(void)
 	GPIO_init(); //General Purpose Initializations function; enabling the General Purpose I/O Register 0 (probably not associated despite name)
 	
 	DDRF &= ~(1 << PF0); //enabling the ADCO pin as input (batt_ref), no pull-up resistors needed despite that
-	//may need to enable this...
-	//PORTF &= ~(1 << PF0); //initializing to disable anything on that path
-	
+
 	ADC_init(); //enabling Analog to Digital Conversion
 	
     while(1)
@@ -63,7 +60,7 @@ void GPIO_init(void) //General Purpose Initializations function
 	LED_init(); //enabling GREEN_LED and RED_LED
 	timer1_16_bit(); //enabling Timer1/Timer3 counter
 	USART0_TX_init(); //enabling USART0 TX
-	INT_init(); //enable External Interrupt for INT5
+	INT5_init(); //enable External Interrupt for INT5
 	
 	sei(); //enabling Global Interrupt Bit
 }
@@ -94,7 +91,7 @@ ISR (INT5_vect) //Interrupt Service Routine for Timer and Blinking LED
 	PORTH ^= (1 << PH6);
 }
 
-void INT_init(void) //INT5(PE5)
+void INT5_init(void) //INT5(PE5)
 {
 	//setting up PE5 (INT5) interrupt; not input because there is no button or anything that'll cause change
 	DDRE |= (1 << PE5); //pin set as on output for PE5; 
@@ -152,7 +149,7 @@ void USART0_TX_init(void) //TXD0(PE1)
 	PORTA |= (1 << PA2); //enabling RS323 USART0 (turning on)
 }
 
-void USART0_sendData(adc_data) //this is my transmission function
+void USART0_sendData(adc_data) //this is my data to serial transmission function
 {
 	while (!(UCSR0A & (1<< UDRE0))) //wait for empty transmit buffer...
 	{
