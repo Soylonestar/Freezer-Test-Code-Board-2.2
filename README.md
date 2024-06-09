@@ -9,3 +9,5 @@ The main goal of this code (on 2.2 boards):
   		d)Set up ADC on ADC0 pin (Analog to Digital Conversion)
 		e)With USART0 read/store/transmit ADC data to serial
   		....
+
+[https://ww1.microchip.com/downloads/en/DeviceDoc/ATmega640-1280-1281-2560-2561-Datasheet-DS40002211A.pdf](Atmega 2560 Chip)
