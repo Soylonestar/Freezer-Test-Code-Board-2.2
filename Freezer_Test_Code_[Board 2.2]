@@ -12,25 +12,28 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/io.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 void timer1_16_bit (void);
 void GPIO_init (void);
 void ADC_init (void);
 
 void USART0_TX_init (void);
-void USART0_print(void);
-void USART0_sendData(adc_data); // what data type do i send?
-//void USART0_print(const char *str);
+void USART0_TX_Data(char adc_data); //transmit char data type to serial
+void USART0_Data (const char *str); //divides up the string data with addresses
 
 void LED_init (void);
 void LED_Toggle(void);
-
 void INT5_init(void); //testing timer with RED_LED by using Interrupts
 
 //determine what volatile is exactly; gives the variable the opportunity to change in the ISR without being optimized in main;
-volatile float adc_data; //this is for the 16-bit data of ADC data register
-volatile uint16_t adc_val; //unsigned 16-bit integer called adc_val
-int adc_conv_complete = 0;
+volatile double adc_val; //this is for the 16-bit data of ADC data register
+bool adc_conv_complete = false; 
+
+char volt_text [] = "Battery Voltage: ";
+char adc_temp[10]; //creating an array of length 10 (minimum), because this ADC Data register is 10 bits
 
 int main(void)
 {
@@ -42,12 +45,16 @@ int main(void)
 	
     while(1)
     {
-         if (adc_conv_complete == 1)
+         if (adc_conv_complete)
 		 {
-			adc_conv_complete = 0; // resets the conversion indicator to 0
+			adc_conv_complete = false; // resets the conversion indicator to 0
 			
-			//read/store and transmit ADC data to serial
-			USART0_sendData(adc_data);
+			USART0_Data(volt_text); //sends String to be divided then sent
+			
+			sprintf(adc_temp, "%.3f", adc_val); //Formal Specifier %3f is Signed float with 3 decimal places
+			USART0_Data(adc_temp); //transmit ADC data "String" to serial
+			
+			USART0_Data(" V \n"); //sends String to be addressed then sent
 			
 			LED_Toggle(); //toggles the Green LED
 		 }
@@ -104,10 +111,13 @@ void INT5_init(void) //INT5(PE5)
 //Keep ISR as short as possible...
 ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 { 
-	adc_conv_complete = 1; //set to 1 for main if-statement telling the the conversion is complete
+	adc_conv_complete = true; //set to 1 for main if-statement telling the the conversion is complete
 	
 	//Since our ADC Auto Trigger uses Timer1 Compare Match B
-	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register
+	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
+	
+	//value not calculating correctly....
+	adc_val = ADC * 1173.094; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
@@ -149,25 +159,23 @@ void USART0_TX_init(void) //TXD0(PE1)
 	PORTA |= (1 << PA2); //"enabling" RS323 USART0 (turning on)
 }
 
-void USART0_sendData(adc_data) //this is my data to serial transmission function
+void USART0_Data (const char *str) //addresses String Data by the individual character addresses
+{
+	for (size_t i = 0; i < strlen(str); i++)
+	{
+		USART0_TX_Data(str[i]); //sends char data to Transmit function
+	}
+}
+
+void USART0_TX_Data(char adc_data) //this is my data to serial transmission function
 {
 	while (!(UCSR0A & (1 << UDRE0))) //wait for empty transmit buffer...
 	{
 		;
 	}
-	adc_data = ADC;
 	UDR0 = adc_data; //Puts data into the buffer, sends the data through TX
 }
-/*
-//THIS IS WHAT I WANT TO SEND...USART0_sendData is my actual transmission function
-void USART0_print (const char *str)
-{
-	for (size_t i = 0; i < strlen(str); i++)
-	{
-		USART0_sendInt(str[]);
-	}
-}
-*/
+
 void LED_init(void)
 {
 	DDRH |= (1 << PH5); //enabling Green_LED pin as output
