@@ -13,4 +13,8 @@ The goal of this code is to be able to read data from serial port, once board is
 >	e) With USART0 read/store/transmit ADC data to serial <br />
 >  	.... <br />
 
+## Troubleshooting
 
+6/10/2024 <br />
+Experiencing problems in the ADC data not converting correctly, despite the constant being calculated correctly.
+This may be due to hardware issues.
