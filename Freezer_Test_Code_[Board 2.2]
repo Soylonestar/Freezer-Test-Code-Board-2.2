@@ -33,7 +33,7 @@ volatile double adc_val; //this is for the 16-bit data of ADC data register
 bool adc_conv_complete = false; 
 
 char volt_text [] = "Battery Voltage: ";
-char adc_temp[10]; //creating an array of length 10 (minimum), because this ADC Data register is 10 bits
+char adc_temp[16]; //creating an array of length 10 (minimum), because this ADC Data register is 10 bits
 
 int main(void)
 {
@@ -117,7 +117,7 @@ ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
 	
 	//value not calculating correctly....
-	adc_val = ADC * 1173.094; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
+	adc_val = ADC * 0.010256483; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
