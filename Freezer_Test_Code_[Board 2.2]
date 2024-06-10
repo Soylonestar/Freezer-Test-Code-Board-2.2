@@ -51,7 +51,7 @@ int main(void)
 			
 			USART0_Data(volt_text); //sends String to be divided then sent
 			
-			sprintf(adc_temp, "%.3f", adc_val); //Formal Specifier %3f is Signed float with 3 decimal places
+			sprintf(adc_temp, "%.3f", adc_val); //Formal Specifier %3f is Signed float with 3 decimal places; Converts Double to String
 			USART0_Data(adc_temp); //transmit ADC data "String" to serial
 			
 			USART0_Data(" V \n"); //sends String to be addressed then sent
