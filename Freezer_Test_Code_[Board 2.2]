@@ -21,7 +21,7 @@ void GPIO_init (void);
 void ADC_init (void);
 
 void USART0_TX_init (void);
-void USART0_TX_Data(char adc_data); //transmit char data type to serial
+void USART0_TX_Data(char Data); //transmit char data type to serial
 void USART0_Data (const char *str); //divides up the string data with addresses
 
 void LED_init (void);
@@ -156,7 +156,7 @@ void USART0_TX_init(void) //TXD0(PE1)
 
 	//Turns on the RS232_01 so that TX goes to serial port; we do this because this is an active low shutdown;
 	DDRA |= (1 << DDA2); //setting PA2 for RS232 USART0 as output
-	PORTA |= (1 << PA2); //"enabling" RS323 USART0 (turning on)
+	PORTA |= (1 << PA2); //"enabling" RS232 USART0 (turning on)
 }
 
 void USART0_Data (const char *str) //addresses String Data by the individual character addresses
@@ -167,13 +167,13 @@ void USART0_Data (const char *str) //addresses String Data by the individual cha
 	}
 }
 
-void USART0_TX_Data(char adc_data) //this is my data to serial transmission function
+void USART0_TX_Data(char Data) //this is my data to serial transmission function
 {
 	while (!(UCSR0A & (1 << UDRE0))) //wait for empty transmit buffer...
 	{
 		;
 	}
-	UDR0 = adc_data; //Puts data into the buffer, sends the data through TX
+	UDR0 = Data; //Puts data into the buffer, sends the data through TX
 }
 
 void LED_init(void)
