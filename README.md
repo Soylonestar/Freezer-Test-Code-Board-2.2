@@ -20,4 +20,5 @@ Experiencing problems in the ADC data not converting correctly, despite the cons
 
 It appears to be hardware issue, the original board had an Vin (5.7V) higher than the Vref (5V). Causing problems. <br \>
 New board has a much lower Vin (1.4) than Vref (5V) when V_batt is 12V. Which is the intended maximum voltage we monitor. This may cause lack of resolution of our data. <br \>
-Making the question, how to make our Vin closer to 5V when V_batt is 12V? (Do we change the voltage dividers? Do we change the voltage reference to something else?
+Making the question, how to make our Vin closer to 5V when V_batt is 12V? (Do we change the voltage dividers? Do we change the voltage reference to something else? <br \>
+
