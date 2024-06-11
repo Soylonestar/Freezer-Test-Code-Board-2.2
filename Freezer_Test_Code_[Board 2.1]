@@ -8,7 +8,7 @@
 //////This is for V2.1 Boards///////
 
 #define F_CPU 16000000UL //system clock 16MHz
-#define USART_0_BAUD 9600 //baud rate of USART
+#define USART_1_BAUD 9600 //baud rate of USART
 
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -21,9 +21,9 @@ void timer1_16_bit (void);
 void GPIO_init (void);
 void ADC_init (void);
 
-void USART0_TX_init (void);
-void USART0_TX_Data(char Data); //transmit char data type to serial
-void USART0_Data (const char *str); //divides up the string data with addresses
+void USART1_TX_init (void);
+void USART1_TX_Data(char Data); //transmit char data type to serial
+void USART1_Data (const char *str); //divides up the string data with addresses
 
 void LED_init (void);
 void LED_Toggle(void);
@@ -50,12 +50,12 @@ int main(void)
 		 {
 			adc_conv_complete = false; // resets the conversion indicator to 0
 			
-			USART0_Data(volt_text); //sends String to be divided then sent
+			USART1_Data(volt_text); //sends String to be divided then sent
 			
 			sprintf(adc_temp, "%.3f", adc_val); //Formal Specifier %3f is Signed float with 3 decimal places; Converts Double to String
-			USART0_Data(adc_temp); //transmit ADC data "String" to serial
+			USART1_Data(adc_temp); //transmit ADC data "String" to serial
 			
-			USART0_Data(" V \n"); //sends String to be addressed then sent
+			USART1_Data(" V \n"); //sends String to be addressed then sent
 			
 			LED_Toggle(); //toggles the Green LED
 		 }
@@ -67,7 +67,7 @@ void GPIO_init(void) //General Purpose Initializations function
 {
 	LED_init(); //enabling GREEN_LED and RED_LED
 	timer1_16_bit(); //enabling Timer1/Timer3 counter
-	USART0_TX_init(); //enabling USART0 TX
+	USART1_TX_init(); //enabling USART0 TX
 	INT5_init(); //enable External Interrupt for INT5
 	
 	sei(); //enabling Global Interrupt Bit
@@ -146,10 +146,10 @@ void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Ch
 	ADCSRA |= (1 << ADIE); // enables ADC Interrupt
 }
 
-void USART0_TX_init(void) //TXD1(PD3)
+void USART1_TX_init(void) //TXD1(PD3)
 {
 	//Set Internal Clock Generator or Baud Rate
-	UBRR1 = ((float)(F_CPU / (16 * (float)USART_0_BAUD)) - 1); //Equation in Pg 203 for calculating UBRR Value
+	UBRR1 = ((float)(F_CPU / (16 * (float)USART_1_BAUD)) - 1); //Equation in Pg 203 for calculating UBRR Value
 	
 	//Set pin and transmitter for USART
 	DDRD |= (1 << PD3); //enabling TX pin as output
@@ -160,15 +160,15 @@ void USART0_TX_init(void) //TXD1(PD3)
 	PORTA |= (1 << PA2); //"enabling" RS232 USART0 (turning on)
 }
 
-void USART0_Data (const char *str) //addresses String Data by the individual character addresses
+void USART1_Data (const char *str) //addresses String Data by the individual character addresses
 {
 	for (size_t i = 0; i < strlen(str); i++)
 	{
-		USART0_TX_Data(str[i]); //sends char data to Transmit function
+		USART1_TX_Data(str[i]); //sends char data to Transmit function
 	}
 }
 
-void USART0_TX_Data(char Data) //this is my data to serial transmission function
+void USART1_TX_Data(char Data) //this is my data to serial transmission function
 {
 	while (!(UCSR1A & (1 << UDRE1))) //wait for empty transmit buffer...
 	{
