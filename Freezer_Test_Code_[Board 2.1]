@@ -27,7 +27,6 @@ void USART1_Data (const char *str); //divides up the string data with addresses
 
 void LED_init (void);
 void LED_Toggle(void);
-void INT5_init(void); //testing timer with RED_LED by using Interrupts
 
 //determine what volatile is exactly; gives the variable the opportunity to change in the ISR without being optimized in main;
 volatile double adc_val; //this is for the 16-bit data of ADC data register
@@ -40,7 +39,8 @@ int main(void)
 {
 	GPIO_init(); //General Purpose Initializations function; enabling the General Purpose I/O Register 0 (probably not associated despite name)
 	
-	DDRF &= ~(1 << PF0); //enabling the ADCO pin as input (batt_ref), no pull-up resistors needed despite that
+	//According to datasheet, pg 276, conversion takes care of using the pin as input...
+	//DDRF &= ~(1 << PF0); //enabling the ADCO pin as input (batt_ref), no pull-up resistors needed despite that
 
 	ADC_init(); //enabling Analog to Digital Conversion
 	
@@ -57,7 +57,7 @@ int main(void)
 			
 			USART1_Data(" V \n"); //sends String to be addressed then sent
 			
-			LED_Toggle(); //toggles the Green LED
+		//	LED_Toggle(); //toggles the Green LED
 		 }
     }
 	return 0;
@@ -68,7 +68,6 @@ void GPIO_init(void) //General Purpose Initializations function
 	LED_init(); //enabling GREEN_LED and RED_LED
 	timer1_16_bit(); //enabling Timer1/Timer3 counter
 	USART1_TX_init(); //enabling USART0 TX
-	INT5_init(); //enable External Interrupt for INT5
 	
 	sei(); //enabling Global Interrupt Bit
 }
@@ -83,31 +82,19 @@ void timer1_16_bit(void) //has two timers to verify that OC1B Timer works...
 	TCCR1B |= (1 << WGM12) | (1 << CS12); //WGM12 is set for CTC mode; CS12 is set for prescalar of 256
 	
 	OCR1A = 31249; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
-	
-	//Timer 3 initialize; OC3C (PE5); Timer 3 Channel C
-	TCCR3A &= ~(1 << WGM31) | ~(1 << WGM30) | (1 << COM1C1); //WGM11-10 are set for CTC mode; COM1C1 is set for Toggle on Compare Match
-	TCCR3A |= (1 << COM1C0); //COM1C0 set for Toggle on Compare Match
-	
-	TCCR3B &= ~(1 << WGM33) | ~(1 << CS31) | ~(1 << CS30); //WGM33 is set for CTC mode; CS31-30 are set for prescalar of 256
-	TCCR3B |= (1 << WGM32) | (1 << CS32); //WGM32 is set for CTC mode; CS32 is set for prescalar of 256
-	
-	OCR3A = 31249; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
 }
+	
+/* 
+	//Question: The RED_LED blinks without our input, why?//
+
+	// OC1B, since the RED_Led is on the same pin, the timer override pin operations, so when the Timer is at low the LED is on...
+	// Pg. 177, to prevent RED_LED blinking must disable the Data Direction Register (DDR) of the LED pin...
 
 ISR (INT5_vect) //Interrupt Service Routine for Timer and Blinking RED LED
 {
-	PORTB ^= (1 << PB6); //red led
+	PORTB ^= (1 << PB6); //red led look above for reason as to why the LED blinks without our input ^^
 }
-
-void INT5_init(void) //INT5(PE5)
-{
-	//setting up PE5 (INT5) interrupt; not input because there is no button or anything that'll cause change
-	DDRE |= (1 << PE5); //pin set as on output for PE5; 
-	
-	//setting up the INT5 interrupt
-	EICRB |= (1 << ISC51) | (1 << ISC50); //setting the External Interrupt Control; with Interrupt Sense Control for rising edge
-	EIMSK |= (1 << INT5); //enabling the External Interrupt;
-}
+*/
 
 //Keep ISR as short as possible...
 ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
@@ -136,9 +123,9 @@ void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Ch
 	ADCSRB |= (1 << ADTS2) | (1 << ADTS0); 
 	ADCSRB &= ~(1 << ADTS1); 
 		
-	// setting ADC Prescalar Selection to a Division Factor of 4; F_CPU / 4 = 
-	ADCSRA |= (1 << ADPS1); 
-	ADCSRA &= ~(1 << ADPS2) | ~(1 << ADPS0);
+	// setting ADC Prescalar Selection to a Division Factor of 128; F_CPU / 128 = 125kHz within 50kHz and 200kHz necessary for conversion time 
+	ADCSRA |= (1 << ADPS1) | (1 << ADPS2) | (1 << ADPS0); 
+	//ADCSRA &= ~(1 << ADPS2) | ~(1 << ADPS0);
 	
 	DIDR0 |= (1 << ADC0D); //enabling Digital Input Disable; digital input buffer on the corresponding ADC pin is disabled
 
@@ -180,7 +167,7 @@ void USART1_TX_Data(char Data) //this is my data to serial transmission function
 void LED_init(void)
 {
 	DDRH |= (1 << PH5); //enabling Green_LED pin as output
-	DDRB |= (1 << PB6); //enabling RED LED as output
+	//DDRB |= (1 << PB6); //enabling RED LED as output
 }
 
 void LED_Toggle (void)
