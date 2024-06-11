@@ -156,8 +156,8 @@ void USART1_TX_init(void) //TXD1(PD3)
 	UCSR1B |= (1 << TXEN1); //enabling Transmitter for USART overriding pin (PD3)
 
 	//Turns on the RS232_01 so that TX goes to serial port; we do this because this is an active low shutdown;
-	DDRA |= (1 << DDA2); //setting PA2 for RS232 USART0 as output
-	PORTA |= (1 << PA2); //"enabling" RS232 USART0 (turning on)
+	DDRA |= (1 << DDA2); //setting PA2 for RS232 USART1 as output
+	PORTA |= (1 << PA2); //"enabling" RS232 USART1 (turning on)
 }
 
 void USART1_Data (const char *str) //addresses String Data by the individual character addresses
