@@ -27,3 +27,6 @@ Determined the necessary resistors to make sure that at the high end (18V) the V
 At V_batt 18V, we get 4.98V. Less the V_ref of 5V. <br />
 At V_batt 12V, we get 3.32V. Less the V_ref of 5V. <br />
 Moving onto how to change the resistors. We've decided to do that on V2.1 boards. So I need to change the code a bit for V2.1 Boards. Code will be clearly shown above. <br />
+Update: <br />
+In board V2.1, we changed the Divsion Factor to 128, because when divide by to F_CPU, we get 125kHz, within the necessary time for the ADC Conversion. <br />
+Another thing is we commented/erased some LED code becasue the RED_LED is overridden by the OC1B Timer so, I'll just blink with the timer. The Green LED was just a bother.
