@@ -43,3 +43,5 @@ Here is a helpful link: <br/>
 [ADC Atmega Helpful Link](https://www.tspi.at/2021/07/15/atmegaavradc.html) <br/>
 This is another ADC tutorial link, may help: <br/>
 [Electronics Wings Tutorials](https://www.electronicwings.com/avr-atmega/getting-started-with-atmel-studio) <br/>
+IMPORTANT UPDATE: <br/>
+Andy stated that I should change back to V2.2 boards. So back to that code... <br/>
