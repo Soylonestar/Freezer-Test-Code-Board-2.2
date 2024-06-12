@@ -36,4 +36,8 @@ In board V2.1, we changed the Divsion Factor to 128, because when divide by to F
 Another thing is we commented/erased some LED code becasue the RED_LED is overridden by the OC1B Timer so, it'll just blink with the timer. <br />
 
 6/12/2024 <br />
-So I changed the resistor values, their approximated values are 2682 ohms and 998 ohms. Which is close. After installing and recalculating constant again, we have 
+So I changed the resistor values, their approximated values are 2682 ohms and 998 ohms. Which is close. After installing and recalculating constant again, we still have the same problem. But it's closer than before. Almost 90% of the time, within 0.1V. <br/>
+Update: <br/>
+After messing around with Timer Values, delays, and prescalar selections, etc., we still have the same problem. Even hooked up a battery to it, same problem.
+Here is a helpful link: <br/>
+[ADC Atmega Helpful Link](https://www.tspi.at/2021/07/15/atmegaavradc.html)
