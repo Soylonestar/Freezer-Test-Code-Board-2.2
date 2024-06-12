@@ -81,7 +81,7 @@ void timer1_16_bit(void) //had two timers to verify that OC1B Timer works...
 	TCCR1B &= ~(1 << WGM13) | ~(1 << CS11) | ~(1 << CS10); //WGM13 is set for CTC mode; CS11-10 are set for prescalar of 256
 	TCCR1B |= (1 << WGM12) | (1 << CS12); //WGM12 is set for CTC mode; CS12 is set for prescalar of 256
 	
-	OCR1A = 31249; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
+	OCR1A = 62499; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
 }
 	
 /* 
@@ -105,7 +105,7 @@ ISR (ADC_vect) //Interrupt Service Routine for the Completion of the Analog to D
 	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
 	
 	//adc_const is more accurate on this board...
-	adc_val = ADC *0.01801185220452450; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider
+	adc_val = ADC *0.01803430864601510; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
