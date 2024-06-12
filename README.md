@@ -40,4 +40,6 @@ So I changed the resistor values, their approximated values are 2682 ohms and 99
 Update: <br/>
 Raised the voltage to 12.7V, btw. After messing around with Timer Values, delays, and prescalar selections, etc., we still have the same problem. Even hooked up a battery to it, same problem.
 Here is a helpful link: <br/>
-[ADC Atmega Helpful Link](https://www.tspi.at/2021/07/15/atmegaavradc.html)
+[ADC Atmega Helpful Link](https://www.tspi.at/2021/07/15/atmegaavradc.html) <br/>
+This is another ADC tutorial link, may help: <br/>
+[Electronics Wings Tutorials](https://www.electronicwings.com/avr-atmega/getting-started-with-atmel-studio) <br/>
