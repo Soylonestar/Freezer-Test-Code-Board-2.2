@@ -110,6 +110,9 @@ ISR (ADC_vect) //Interrupt Service Routine for the Completion of the Analog to D
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
 {
+	//I don't need this because PRADC initializes at 0; disabled;
+	PRR0 &= ~(1 << PRADC); //Disabling the Power Reduction ADC
+
 	//setting Voltage Reference for ADC to AVCC (5V) with external capacitor at AREF pin
 	ADMUX |= (1 << REFS0);
 	ADMUX &= ~(1 << REFS1); 
