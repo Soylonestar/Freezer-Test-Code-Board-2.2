@@ -34,3 +34,4 @@ In board V2.1, we changed the Divsion Factor to 128, because when divide by to F
 Another thing is we commented/erased some LED code becasue the RED_LED is overridden by the OC1B Timer so, it'll just blink with the timer. <br />
 
 6/12/2024 <br />
+So I changed the resistor values, their approximated values are 2682 ohms and 998 ohms. Which is close. After installing and recalculating constant again, we have 
