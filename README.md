@@ -4,6 +4,8 @@ The goal of this code is to be able to read data from serial port, once board is
 
 [Atmega 2560 Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/ATmega640-1280-1281-2560-2561-Datasheet-DS40002211A.pdf) <br/>
 
+[AtMega 2560 Documentation Tables](https://www.microchip.com/en-us/product/ATmega2560#document-table) <br/>
+
 ## Steps and Procedures
 
 1) Read the Batt_REF of the board and be able to transmit that data through the serial port <br /> 
