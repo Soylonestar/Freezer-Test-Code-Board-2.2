@@ -119,8 +119,8 @@ ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 	//Since our ADC Auto Trigger uses Timer1 Compare Match B (OC1B)
 	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
 	
-	//value not calculating correctly....
-	adc_val = ADC * 0.040222960633117; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
+	//adc_const is getting more accurate...
+	adc_val = ADC * 0.0402229606331169; //Data Conversion with Constant = V_batt / (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
