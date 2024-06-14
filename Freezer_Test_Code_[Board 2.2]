@@ -6,7 +6,7 @@
  *  Author: agarciasampedroperez
  */ 
 
-//This is for V 2.2 Boards
+//////This is for V 2.2 Boards////////
 
 #define F_CPU 16000000UL //system clock 16MHz
 #define USART_0_BAUD 9600 //baud rate of USART
@@ -41,7 +41,8 @@ int main(void)
 {
 	GPIO_init(); //General Purpose Initializations function; enabling the General Purpose I/O Register 0 (probably not associated despite name)
 	
-	DDRF &= ~(1 << PF0); //enabling the ADCO pin as input (batt_ref), no pull-up resistors needed despite that
+	//According to data sheet, pg 276, conversion takes care of using the pin as input...
+	//DDRF &= ~(1 << PF0); //enabling the ADCO pin as input (batt_ref), no pull-up resistors needed despite that
 
 	ADC_init(); //enabling Analog to Digital Conversion
 	
@@ -95,7 +96,7 @@ void timer1_16_bit(void) //has two timers to verify that OC1B Timer works...
 	OCR3A = 31249; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
 }
 
-ISR (INT5_vect) //Interrupt Service Routine for Timer and Blinking LED
+ISR (INT5_vect) //Interrupt Service Routine for Timer and Blinking RED LED
 {
 	PORTH ^= (1 << PH6);
 }
@@ -115,11 +116,11 @@ ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 { 
 	adc_conv_complete = true; //set to 1 for main if-statement telling the the conversion is complete
 	
-	//Since our ADC Auto Trigger uses Timer1 Compare Match B
+	//Since our ADC Auto Trigger uses Timer1 Compare Match B (OC1B)
 	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
 	
 	//value not calculating correctly....
-	adc_val = ADC * 0.040261008522727; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
+	adc_val = ADC * 0.040222960633117; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
@@ -137,9 +138,8 @@ void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Ch
 	ADCSRB |= (1 << ADTS2) | (1 << ADTS0); 
 	ADCSRB &= ~(1 << ADTS1); 
 		
-	// setting ADC Prescalar Selection to a Division Factor of 4; F_CPU / 4 = 
-	ADCSRA |= (1 << ADPS1); 
-	ADCSRA &= ~(1 << ADPS2) | ~(1 << ADPS0);
+	// setting ADC Prescalar Selection to a Division Factor of 128; F_CPU / 128 = 125kHz within 50kHz and 200kHz necessary for conversion time
+	ADCSRA |= (1 << ADPS1) | (1 << ADPS2) | (1 << ADPS0);
 	
 	DIDR0 |= (1 << ADC0D); //enabling Digital Input Disable; digital input buffer on the corresponding ADC pin is disabled
 
@@ -182,9 +182,11 @@ void LED_init(void)
 {
 	DDRH |= (1 << PH5); //enabling Green_LED pin as output
 	DDRH |= (1 << PH6); //enabling RED LED as output
+
+	PORTH |= (1 << PH6) | (1 << PH5); //initializing both LED off
 }
 
 void LED_Toggle (void)
 {
-	PORTH ^= (1 << PH5); //toggles the LED
+	PORTH ^= (1 << PH5); //toggles the Green LED
 }
