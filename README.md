@@ -51,3 +51,4 @@ Here is the internal and external impedance of the ADC pin...<br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/839425e8-c842-4e3e-a3de-0f538b5a1019" width="525" /> <br/>
 Update: <br/>
 Forbes and I are gonna try programming a professionally done board with a ATMEGA 1284P <br/>
+[Atmega 1284P Datasheet](https://ww1.microchip.com/downloads/en/DeviceDoc/8059S.pdf) <br/>
