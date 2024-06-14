@@ -1,0 +1,149 @@
+/*
+ * main.c
+ *
+ * Created: 6/14/2024 12:06:48 PM
+ *  Author: agarciasampedroperez
+ */ 
+
+//////MEGA_1284P Board////////////
+
+#define F_CPU 11059200UL //system clock 11.0592MHz
+#define USART_1_BAUD 9600 //baud rate of USART
+
+#include <avr/interrupt.h>
+#include <avr/io.h>
+#include <stdio.h>
+#include <util/delay.h>
+#include <string.h>
+#include <stdbool.h>
+
+int main(void)
+{
+	#if defined( __GNUC__ )
+	/* Setup stdout to point to the correct usart (USART1). This is needed to
+	 * use the fdev_setup_stream() macro in GCC.
+	 */
+	stdout = &usart1_str;
+	#endif
+
+	// Make sure to use lowest possible power consumption
+	power_reduction_enable();
+
+	// Enter terminal mode if SW1 is pressed
+	if (!(PINB & (1 << PORTB1))) {
+		execute_terminal_mode();
+	}	else {
+		execute_demo_mode();
+	}
+   
+    while(1)
+    {
+       
+    }
+}
+
+#if defined( __GNUC__ )
+/** Make sure printf knows where to print. The macro fdev_setup_stream()
+ * is used to prepare a user-supplied FILE buffer for operation with stdio.
+ */
+FILE usart1_str = FDEV_SETUP_STREAM((int(*)(char, FILE *))usart1_putchar, NULL, _FDEV_SETUP_WRITE);
+#endif
+
+/**
+ * \brief Function to reduce power consumption.
+ *
+ * This function will turn off clocks to all IO modules except for
+ * Timer2 which is used in power-save mode.
+ * The function will also shutdown analog modules like the AC and ADC.
+ */
+void power_reduction_enable(void)
+{
+	// Disable Analog Comparator
+	ACSR |= (1 << ACD);
+
+	// Turn off ADC
+	ADCSRA &= ~(1 << ADEN);
+
+	// Turn off internal bandgap
+	ADMUX = 0x00;
+
+	// Digital Input disable
+	DIDR0 = 0xFF;
+
+	// Turn off clock to all I/Os except for timer2 (used in power-save mode)
+	PRR0 = (1 << PRTWI) | (0 << PRTIM2) | (1 << PRTIM0) | (1 << PRUSART1)
+		| (1 << PRTIM1) | (1 << PRSPI) | (1 << PRUSART0) | (1 << PRADC);
+}
+
+/** \brief Function to setup USART1.
+ *
+ * USART1 is used to communicate with the boardcontroller (AT32UC3256B1).
+ *
+ * USART1 configuration:
+ * - 57600 baud
+ * - No parity
+ * - 1 stop bit
+ * - 8-bit character size
+ */
+void usart1_init(void)
+{
+	// Make sure I/O clock to USART1 is enabled
+	PRR0 &= ~(1 << PRUSART1);
+
+	// Set baud rate
+	UBRR1 = ((float)(F_CPU / (16 * (float)USART_1_BAUD)) - 1);
+
+	// Clear USART Transmit complete flag, normal USART transmission speed
+	UCSR1A = (1 << TXC1) | (0 << U2X1);
+
+	// Enable receiver and transmitter
+	UCSR1B = (1 << RXEN1) | (1 << TXEN1);
+
+	// Asynchronous mode, no parity, 1 stop bit, character size = 8-bit
+	UCSR1C = (1 << UCSZ11) | (1 << UCSZ10) | (0 << UCPOL1);
+}
+
+/** \brief Function to setup ADC.
+ *
+ * ADC configuration:
+ * - Internal 2.56V bandgap voltage with 100nF cap at AREF pin as reference
+ * - 172.8kHz ADC frequency
+ */
+void adc_init(void)
+{
+	// Make sure I/O clock to the ADC is enabled
+	PRR0 &= ~(1 << PRADC);
+
+	// Digital Input enable
+	DIDR0 = 0x00;
+
+	// Use internal 2.56V bandgap reference with external 100nF cap at AREF pin
+	ADMUX = (1 << REFS1) | (1 << REFS0);
+
+	// Enable ADC, ADC frequency set to 16MHz/128 = 125kHz
+	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
+}
+
+static uint16_t read_adc(enum adc_sources source)
+{
+	uint16_t adc_data = 0;
+
+	// Clear old source and setup new source to sample from
+	ADMUX &= 0xE0;
+	ADMUX |= source;
+
+	for (int i = 0 ; i < 16 ; i++) {
+		//Start single conversion
+		ADCSRA |= (1<<ADSC);
+
+		//Wait for conversion complete
+		while(!(ADCSRA & (1<<ADIF)));
+
+		//Read ADC conversion result
+		adc_data += ADC;
+	}
+
+	adc_data = adc_data/16;
+
+	return adc_data;
+}
