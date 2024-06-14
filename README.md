@@ -45,3 +45,6 @@ This is another ADC tutorial link, may help: <br/>
 [Electronics Wings Tutorials](https://www.electronicwings.com/avr-atmega/getting-started-with-atmel-studio) <br/>
 IMPORTANT UPDATE: <br/>
 Andy stated that I should change back to V2.2 boards. So back to that code... <br/>
+
+6/14/2024 <br/>
+Here is the internal and external impedance of the ADC pin...<br/>
