@@ -53,3 +53,4 @@ Update: <br/>
 Forbes and I are gonna try programming a professionally done board with a ATMEGA 1284P.<br/>
 But before that, we are checking the overall noise of our V2.2 board. We got a ramping noise effect going on, with a Vpp of 0.1V. Not only that but there is a huge amount of ground noise, despite everything off. <br/>
 [Atmega 1284P Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega164A_PA-324A_PA-644A_PA-1284_P_Data-Sheet-40002070B.pdf) <br/>
+[Mega-1284P Board Schematics](https://ww1.microchip.com/downloads/en/Appnotes/doc8377.pdf) <br/>
