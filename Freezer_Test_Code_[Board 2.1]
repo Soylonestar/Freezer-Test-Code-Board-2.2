@@ -105,7 +105,7 @@ ISR (ADC_vect) //Interrupt Service Routine for the Completion of the Analog to D
 	TIFR1 |= (1 << OCF1B); //Timer1 Interrupt Flag Register enabled to reset flag
 	
 	//adc_const is more accurate on this board...
-	adc_val = ADC *0.01803430864601510; //Data Conversion with Constant = (Vin * 2^10)/Vref; Vin needed a voltage divider
+	adc_val = ADC *0.01803430864601510; //Data Conversion with Constant = V_batt / (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
 
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
