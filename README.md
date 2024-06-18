@@ -55,3 +55,6 @@ But before that, we are checking the overall noise of our V2.2 board. We got a r
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/b901f1ae-7327-43e9-afef-4c243a96e84d" width="525"/> <br/>
 [Atmega 1284P Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega164A_PA-324A_PA-644A_PA-1284_P_Data-Sheet-40002070B.pdf) <br/>
 [Mega-1284P Board Schematics](https://ww1.microchip.com/downloads/en/Appnotes/doc8377.pdf) <br/>
+
+6/18/2024 <br/>
+Continuing on working on the MEGA-1284P Code...<br/>
