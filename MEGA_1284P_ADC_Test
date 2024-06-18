@@ -17,70 +17,25 @@
 #include <string.h>
 #include <stdbool.h>
 
+uint16_t adc_data;
+
 int main(void)
 {
-	#if defined( __GNUC__ )
-	/* Setup stdout to point to the correct usart (USART1). This is needed to
-	 * use the fdev_setup_stream() macro in GCC.
-	 */
-	stdout = &usart1_str;
-	#endif
-
-	// Make sure to use lowest possible power consumption
-	power_reduction_enable();
-
-	// Enter terminal mode if SW1 is pressed
-	if (!(PINB & (1 << PORTB1))) {
-		execute_terminal_mode();
-	}	else {
-		execute_demo_mode();
-	}
-   
+	sei(); //enabling the Global Interrupt bit
+	
     while(1)
     {
-       
+       ;
     }
 }
 
-#if defined( __GNUC__ )
-/** Make sure printf knows where to print. The macro fdev_setup_stream()
- * is used to prepare a user-supplied FILE buffer for operation with stdio.
- */
-FILE usart1_str = FDEV_SETUP_STREAM((int(*)(char, FILE *))usart1_putchar, NULL, _FDEV_SETUP_WRITE);
-#endif
-
-/**
- * \brief Function to reduce power consumption.
- *
- * This function will turn off clocks to all IO modules except for
- * Timer2 which is used in power-save mode.
- * The function will also shutdown analog modules like the AC and ADC.
- */
-void power_reduction_enable(void)
-{
-	// Disable Analog Comparator
-	ACSR |= (1 << ACD);
-
-	// Turn off ADC
-	ADCSRA &= ~(1 << ADEN);
-
-	// Turn off internal bandgap
-	ADMUX = 0x00;
-
-	// Digital Input disable
-	DIDR0 = 0xFF;
-
-	// Turn off clock to all I/Os except for timer2 (used in power-save mode)
-	PRR0 = (1 << PRTWI) | (0 << PRTIM2) | (1 << PRTIM0) | (1 << PRUSART1)
-		| (1 << PRTIM1) | (1 << PRSPI) | (1 << PRUSART0) | (1 << PRADC);
-}
-
 /** \brief Function to setup USART1.
- *
- * USART1 is used to communicate with the boardcontroller (AT32UC3256B1).
+ *  //////We DO NOT screw with this because this communicates the USB to Board Controller to Atmega1284P//////
+ * 
+ * USART1 is used to communicate with the board controller (AT32UC3256B1).
  *
  * USART1 configuration:
- * - 57600 baud
+ * - 57600 baud //used the equation to calculate this...
  * - No parity
  * - 1 stop bit
  * - 8-bit character size
@@ -111,11 +66,13 @@ void usart1_init(void)
  */
 void adc_init(void)
 {
-	// Make sure I/O clock to the ADC is enabled
+	// Make sure I/O clock to the ADC is enabled //don't normally need to do this because this initializes at 0 (enabled)
 	PRR0 &= ~(1 << PRADC);
 
 	// Digital Input enable
-	DIDR0 = 0x00;
+	//DIDR0 = 0x00; //gonna see why we need this on, I'm not trying to use an input
+	
+	DIDR0 |= (1 << ADC0D); 	//Disable Digital Input
 
 	// Use internal 2.56V bandgap reference with external 100nF cap at AREF pin
 	ADMUX = (1 << REFS1) | (1 << REFS0);
@@ -124,26 +81,87 @@ void adc_init(void)
 	ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 }
 
-static uint16_t read_adc(enum adc_sources source)
+/**
+ * \brief Function to start ADC conversion.
+ *
+ * This function will do ADC_NUM_OVERSAMPLINGx oversampling. Per default it
+ * will perform 16x oversampling.
+ *
+ * \param channel    ADC channel number
+ *
+ * \return adc_data  Result from ADC reading of selected ADC channel
+ */
+void read_adc(adc_data)
 {
-	uint16_t adc_data = 0;
-
-	// Clear old source and setup new source to sample from
-	ADMUX &= 0xE0;
-	ADMUX |= source;
-
 	for (int i = 0 ; i < 16 ; i++) {
 		//Start single conversion
-		ADCSRA |= (1<<ADSC);
+		ADCSRA |= (1 << ADSC);
 
 		//Wait for conversion complete
-		while(!(ADCSRA & (1<<ADIF)));
+		while(!(ADCSRA & (1 << ADIF)));
 
 		//Read ADC conversion result
 		adc_data += ADC;
 	}
-
+	//takes the average of the 16 data bits...
 	adc_data = adc_data/16;
 
 	return adc_data;
+}
+
+/**
+ * \brief Function to read Light sensor ADC value.
+ */
+static void read_light_sensor(void)
+{
+	uint16_t light_sensor_data;
+	// Read LIGHT SENSOR
+	light_sensor_data = read_adc(LIGHT_SENSOR);
+
+	// Send LIGHT_SENSOR_data to PC
+	printf("LIGHT SENSOR ADC value: %4d\r\n", light_sensor_data);
+}
+
+ISR(TIMER1_COMPB_vect) //OC1B pin
+{
+	// Turn on LEDs (make sure PORTB0 is set as output)
+	DDRB |= (1 << DDB0);
+	
+	LED_toggle();
+	
+	TIFR1 |= (1 << OCF1B); //Clear the Output Compare B Match Flag
+}
+
+void LED_toggle (void)
+{
+	PORTB ^= (1 << PORTB3) | (1 << PORTB2) | (1 << PORTB1) | (1 << PORTB0);
+}
+
+/** \brief Function to setup timer1 as a time base for the touch lib.
+ *
+ * In this mode Timer1 is used to generate PWM signal on the LEDs.
+ *
+ * Timer1 configuration:
+ * - CTC mode (clear on compare match A)
+ * - clkIO/8 prescaling
+ */
+void timer1_init(void) //16-bit timer; OC1B pin, Timer 1 and Channel B
+{
+	// Make sure I/O clock to timer1 is enabled
+	PRR0 &= ~(1 << PRTIM1);
+
+	// Enable timer1 output compare match B interrupt ISR
+	TIMSK1 = (1 << OCIE1B); // this is an interrupt bit mask
+
+	// Set timer compare value (how often timer ISR will fire)
+	OCR1A = 21599;
+
+	//setting for Toggle OC1B on Compare Match; the rest initializes at 0
+	TCCR1A |= (1 << COM1B0); 
+
+	// Timer1 mode = CTC (count up to compare value, then reset); the rest initializes at 0
+	TCCR1B |= (1 << WGM12);
+
+	// Timer1 prescaler = system clock / 256
+	TCCR1B |= (1 << CS12) | (0 << CS11) | (0 << CS10);
 }
