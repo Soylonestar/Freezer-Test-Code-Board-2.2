@@ -53,8 +53,10 @@ Update: <br/>
 Forbes and I are gonna try programming a professionally done board with a ATMEGA 1284P.<br/>
 But before that, we are checking the overall noise of our V2.2 board. We got a ramping noise effect going on, with a Vpp of 0.1V. Not only that but there is a huge amount of ground noise, despite everything off. <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/b901f1ae-7327-43e9-afef-4c243a96e84d" width="525"/> <br/>
-[Atmega 1284P Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega164A_PA-324A_PA-644A_PA-1284_P_Data-Sheet-40002070B.pdf) <br/>
+So we decided on coding the same ADC test but on a different board. A professionally made one. <br/>
+<img src= "https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/818c11b8-e881-4ea0-bafc-62bcb3aa239b" width = "600"/> <br/>
 [Mega-1284P Board Schematics](https://ww1.microchip.com/downloads/en/Appnotes/doc8377.pdf) <br/>
+[Atmega 1284P Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/MCU08/ProductDocuments/DataSheets/ATmega164A_PA-324A_PA-644A_PA-1284_P_Data-Sheet-40002070B.pdf) <br/>
 
 6/18/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
@@ -64,4 +66,6 @@ Continuing on working on the MEGA-1284P Code...<br/>
 So the code runs...or we think it does. The LED toggle when the coversion is sent to Usart1, etc. But to see the actual data we are trying to use the oscilloscope to see the data. From the TXD1 pin. <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/c6488c00-23f1-400e-95fb-2178383c87f3" width="600" /> <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/71690727-a92a-4da8-9c41-b5cd5e121db5" width = "600" /> <br/>
-Both images above show the serial data of the Usart being transmitted from the board.
+Update: <br/>
+Both images above show the serial data of the Usart being transmitted from the MEGA-1284P board on the oscilloscope. This means the code works just fine.
+
