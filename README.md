@@ -58,3 +58,6 @@ But before that, we are checking the overall noise of our V2.2 board. We got a r
 
 6/18/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
+
+6/19/2024 <br/>
+Continuing on working on the MEGA-1284P Code...<br/>
