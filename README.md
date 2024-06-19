@@ -61,3 +61,4 @@ Continuing on working on the MEGA-1284P Code...<br/>
 
 6/19/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
+So the code runs...or we think it does. The LED toggle when the coversion is sent to Usart1, etc. But to see the actual data we are trying to use the oscilloscope to see the data. From the TXD1 pin. <br/>
