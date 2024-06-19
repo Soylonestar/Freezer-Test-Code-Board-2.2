@@ -43,10 +43,10 @@ FILE usart1_str = FDEV_SETUP_STREAM((int(*)(char, FILE *))usart1_putchar, NULL, 
 
 int main(void)
 {
-	//sei(); //enabling the Global Interrupt bit
+	sei(); //enabling the Global Interrupt bit
 	usart1_init(); 
-	//adc_init();
-	//timer1_init();
+	adc_init();
+	timer1_init();
 	LED_init();
 	
 	/*#if defined (_GNUC__)
@@ -58,7 +58,7 @@ int main(void)
 	
     while(1)
     {
-		/*if (conv_complete)
+		if (conv_complete)
 		{
 			conv_complete = false; // resets the conversion indicator to 0
 			
@@ -70,10 +70,10 @@ int main(void)
 			usart1_Data(" V \n"); //sends String to be addressed then sent
 			
 			LED_toggle();
-		} */
-		usart1_Data(test);
-		_delay_ms(200);
-		LED_toggle();
+		} 
+		//usart1_Data(test);
+		//_delay_ms(200);
+		//LED_toggle();
 		
 	}
 }
