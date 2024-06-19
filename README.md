@@ -63,3 +63,4 @@ Continuing on working on the MEGA-1284P Code...<br/>
 Continuing on working on the MEGA-1284P Code...<br/>
 So the code runs...or we think it does. The LED toggle when the coversion is sent to Usart1, etc. But to see the actual data we are trying to use the oscilloscope to see the data. From the TXD1 pin. <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/c6488c00-23f1-400e-95fb-2178383c87f3" width="525" /> <br/>
+<img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/71690727-a92a-4da8-9c41-b5cd5e121db5" width = "600" /> <br/>
