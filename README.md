@@ -67,5 +67,8 @@ So the code runs...or we think it does. The LED toggle when the coversion is sen
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/c6488c00-23f1-400e-95fb-2178383c87f3" width="600" /> <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/71690727-a92a-4da8-9c41-b5cd5e121db5" width = "600" /> <br/>
 Update: <br/>
-Both images above show the serial data of the Usart being transmitted from the MEGA-1284P board on the oscilloscope. This means the code works just fine.
+Both images above show the serial data of the Usart being transmitted from the MEGA-1284P board on the oscilloscope. This means the code works just fine. <br/>
+
+6/20/2024 <br/>
+I'm going to see if I can create some sort of samplying code for the V2.2 boards, hopefully will help with the precision and erradicacy.
 
