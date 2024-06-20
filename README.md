@@ -60,6 +60,17 @@ So we decided on coding the same ADC test but on a different board. A profession
 
 6/18/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
+The programming cable connections are as follows for the Atmel-ICE: <br/>
+1) Pin 1 to TCK <br /> 
+2) Pin 2 to GND <br />
+3) Pin 3 to TDO <br />
+4) Pin 4 to VCC <br />
+5) Pin 5 to TMS <br />
+6) Pin 6 to RESET <br /> 
+7) ---- <br />
+8) ---- <br />
+9) Pin 9 to TDI <br />
+10) Pin 0 to GND <br />
 
 6/19/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
