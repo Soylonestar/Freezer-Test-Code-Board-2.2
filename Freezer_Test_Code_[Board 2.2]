@@ -22,6 +22,8 @@ void timer1_16_bit (void);
 void GPIO_init (void);
 void ADC_init (void);
 
+void read_ADC(void);
+
 void USART0_TX_init (void);
 void USART0_TX_Data(char Data); //transmit char data type to serial
 void USART0_Data (const char *str); //divides up the string data with addresses
@@ -46,9 +48,12 @@ int main(void)
 
 	ADC_init(); //enabling Analog to Digital Conversion
 	
+	_delay_ms(10);
+	
     while(1)
     {
-         if (adc_conv_complete)
+         /*
+		 if (adc_conv_complete)
 		 {
 			adc_conv_complete = false; // resets the conversion indicator to 0
 			
@@ -61,6 +66,14 @@ int main(void)
 			
 			LED_Toggle(); //toggles the Green LED
 		 }
+		 */
+		 USART0_Data(volt_text); 
+		 read_ADC();
+		 sprintf(adc_temp, "%.3f", adc_val);
+		 USART0_Data(adc_temp);
+		 USART0_Data(" V \n");
+		 LED_Toggle();
+		 _delay_ms(300);
     }
 	return 0;
 }
@@ -77,6 +90,7 @@ void GPIO_init(void) //General Purpose Initializations function
 
 void timer1_16_bit(void) //has two timers to verify that OC1B Timer works...
 {
+	/*
 	//Timer 1 initialize; OC1B (PB6); Timer 1 Channel B
 	TCCR1A &= ~(1 << WGM11) | ~(1 << WGM10) | (1 << COM1B1); //WGM11-10 are set for CTC mode; COM1B1 is set for Toggle on Compare Match
 	TCCR1A |= (1 << COM1B0); //COM1B0 set for Toggle on Compare Match
@@ -85,6 +99,7 @@ void timer1_16_bit(void) //has two timers to verify that OC1B Timer works...
 	TCCR1B |= (1 << WGM12) | (1 << CS12); //WGM12 is set for CTC mode; CS12 is set for prescalar of 256
 	
 	OCR1A = 31249; //Compare Value for 16-bit timer; TOP value; set for 1 Hz with prescalar of 256
+	*/
 	
 	//Timer 3 initialize; OC3C (PE5); Timer 3 Channel C
 	TCCR3A &= ~(1 << WGM31) | ~(1 << WGM30) | (1 << COM1C1); //WGM11-10 are set for CTC mode; COM1C1 is set for Toggle on Compare Match
@@ -101,17 +116,18 @@ ISR (INT5_vect) //Interrupt Service Routine for Timer and Blinking RED LED
 	PORTH ^= (1 << PH6);
 }
 
-void INT5_init(void) //INT5(PE5)
+void INT5_init(void) //INT5 (PE5)
 {
 	//setting up PE5 (INT5) interrupt; not input because there is no button or anything that'll cause change
 	DDRE |= (1 << PE5); //pin set as on output for PE5; 
 	
 	//setting up the INT5 interrupt
 	EICRB |= (1 << ISC51) | (1 << ISC50); //setting the External Interrupt Control; with Interrupt Sense Control for rising edge
-	EIMSK |= (1 << INT5); //enabling the External Interrupt;
+	EIMSK |= (1 << INT5); //enabling the External Interrupt
 }
 
 //Keep ISR as short as possible...
+/*
 ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 { 
 	adc_conv_complete = true; //set to 1 for main if-statement telling the the conversion is complete
@@ -122,29 +138,48 @@ ISR (ADC_vect) //Interrupt Service Routine for the Analog to Digital Conversion
 	//adc_const is getting more accurate...
 	adc_val = ADC * 0.0402229606331169; //Data Conversion with Constant = V_batt / (Vin * 2^10)/Vref; Vin needed a voltage divider	
 }
-
+*/
 void ADC_init(void) //initializes Analog to Digital Converter; ADC0(PF0) pin, Channel 0;
 {
-	//setting Voltage Reference for ADC to AVCC (5V) with external capacitor at AREF pin
+	//setting Voltage Reference for ADC to AVCC (5V) with 0.1uF external capacitor at AREF pin
 	ADMUX |= (1 << REFS0);
 	ADMUX &= ~(1 << REFS1); 
 	
 	ADCSRA |= (1 << ADEN); // enables the ADC
 	
+	/*
 	//bottom three go together, because both are about the trigger
 	ADCSRA |= (1 << ADATE); // enables ADC Auto Trigger Enable bit; meaning ADC will start conversion on a positive edge of the selected trigger signal
 	
 	// setting ADC Auto Trigger Source to OC1B (TImer1 Compare Match B)
 	ADCSRB |= (1 << ADTS2) | (1 << ADTS0); 
-	ADCSRB &= ~(1 << ADTS1); 
-		
+	ADCSRB &= ~(1 << ADTS1);
+	*/
+
 	// setting ADC Prescalar Selection to a Division Factor of 128; F_CPU / 128 = 125kHz within 50kHz and 200kHz necessary for conversion time
 	ADCSRA |= (1 << ADPS1) | (1 << ADPS2) | (1 << ADPS0);
 	
 	DIDR0 |= (1 << ADC0D); //enabling Digital Input Disable; digital input buffer on the corresponding ADC pin is disabled
 
 	//enabling ADC Conversion Complete Interrupt
-	ADCSRA |= (1 << ADIE); // enables ADC Interrupt
+	//ADCSRA |= (1 << ADIE); // enables ADC Interrupt
+}
+
+void read_ADC() //reads ADC data x amount of times and then takes the average of it
+{
+	for (int i = 0; i < 16; i++)
+	{
+		//start single conversion manually
+		ADCSRA |= (1 << ADSC);
+		
+		//wait for conversion to complete
+		while(!(ADCSRA & (1 << ADIF)));
+		
+		//Reading the ADC data and adding it into the variable
+		adc_val += ADC;
+	}
+	//takes the average and multiplies by the conversion constant
+	adc_val = (adc_val / 16) * 0.0402229606331169;
 }
 
 void USART0_TX_init(void) //TXD0(PE1)
@@ -180,8 +215,7 @@ void USART0_TX_Data(char Data) //this is my data to serial transmission function
 
 void LED_init(void)
 {
-	DDRH |= (1 << PH5); //enabling Green_LED pin as output
-	DDRH |= (1 << PH6); //enabling RED LED as output
+	DDRH |= (1 << PH5) | (1 << PH6); //enabling Green_LED and RED_LED pins as output
 
 	PORTH |= (1 << PH6) | (1 << PH5); //initializing both LED off
 }
