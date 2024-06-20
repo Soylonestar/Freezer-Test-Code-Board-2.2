@@ -64,11 +64,12 @@ Continuing on working on the MEGA-1284P Code...<br/>
 6/19/2024 <br/>
 Continuing on working on the MEGA-1284P Code...<br/>
 So the code runs...or we think it does. The LED toggle when the coversion is sent to Usart1, etc. But to see the actual data we are trying to use the oscilloscope to see the data. From the TXD1 pin. <br/>
-<img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/c6488c00-23f1-400e-95fb-2178383c87f3" width="600" /> <br/>
+<img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/c6488c00-23f1-400e-95fb-2178383c87f3" width = "600" /> <br/>
 <img src="https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/71690727-a92a-4da8-9c41-b5cd5e121db5" width = "600" /> <br/>
 Update: <br/>
 Both images above show the serial data of the Usart being transmitted from the MEGA-1284P board on the oscilloscope. This means the code works just fine. <br/>
 
 6/20/2024 <br/>
-I'm going to see if I can create some sort of samplying code for the V2.2 boards, hopefully will help with the precision and erradicacy.
-
+I'm going to see if I can create some sort of sampleing code for the V2.2 boards, hopefully will help with the precision and erradicacy.
+<img src= "https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/6b624d61-9836-47f6-b6b2-44a78752b402" width = "600" /> <br/>
+Here is what I'm getting for my ADC Voltage Readings...it is miles more consistent than before and much closer to the actual voltage readings.
