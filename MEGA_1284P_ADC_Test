@@ -130,7 +130,7 @@ void usart1_TX_Data (char Data) //transmit data type char to usb????
 /** \brief Function to setup ADC.
  *
  * ADC configuration:
- * - Internal 2.56V bandgap voltage with 100nF cap at AREF pin as reference
+ * - AVCC voltage with 100nF cap at AREF pin as reference
  * - 172.8kHz ADC frequency
  */
 void adc_init(void)
