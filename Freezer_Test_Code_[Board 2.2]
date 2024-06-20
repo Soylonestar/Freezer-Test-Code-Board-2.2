@@ -178,8 +178,8 @@ void read_ADC() //reads ADC data x amount of times and then takes the average of
 		//Reading the ADC data and adding it into the variable
 		adc_val += ADC;
 	}
-	//takes the average and multiplies by the conversion constant
-	adc_val = (adc_val / 16) * 0.0402229606331169;
+	//takes the average (16) and multiplies by the conversion constant
+	adc_val = adc_val * 0.002513935039569810;
 }
 
 void USART0_TX_init(void) //TXD0(PE1)
