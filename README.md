@@ -81,6 +81,6 @@ Update: <br/>
 Both images above show the serial data of the Usart being transmitted from the MEGA-1284P board on the oscilloscope. This means the code works just fine. <br/>
 
 6/20/2024 <br/>
-I'm going to see if I can create some sort of sampleing code for the V2.2 boards, hopefully will help with the precision and erradicacy.
+I'm going to see if I can create some sort of sampleing code for the V2.2 boards, hopefully will help with the precision and erradicacy. <br/>
 <img src= "https://github.com/Soylonestar/Freezer-Test-Code-Board-2.2/assets/53907747/6b624d61-9836-47f6-b6b2-44a78752b402" width = "600" /> <br/>
 Here is what I'm getting for my ADC Voltage Readings...it is miles more consistent than before and much closer to the actual voltage readings.
